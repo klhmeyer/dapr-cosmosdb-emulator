@@ -2,7 +2,7 @@
 https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator
 Use the docker linux way.
 
-## Run the emulator
+## Administration of the emulator
 CosmosDb emulator
 https://localhost:8081/_explorer/index.html
 
