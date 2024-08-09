@@ -1,0 +1,49 @@
+version: '3'
+services:
+   
+  ###################################
+  # Dapr sidecar inventory service
+  ###################################
+  inventory-service-daprd:
+    image: "daprio/daprd:1.13.0"
+    command: ["./daprd",
+     "-app-id", "inventory-service",
+     "-app-port", "8031",
+     "-app-channel-address", "host.docker.internal",
+     "-dapr-grpc-port", "50002",
+     "-log-level", "debug",
+     "-resources-path", "/components"]
+    volumes:
+      - ../components/statestore-cosmosdb/inventory/statestore.yaml:/components/statestore.yaml
+      - ../components/statestore-cosmosdb/certificates:/certificates
+    environment:
+      - SSL_CERT_DIR=/certificates
+    ports:
+      - "50002:50002"
+    restart: unless-stopped
+    depends_on:
+       - cosmos-db
+    
+    networks:
+      - retail-example
+  
+  ###################################
+  # Cosmos Db Emulator
+  ###################################   
+  cosmos-db:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    ports: 
+      - "8081:8081"
+      - "10251:10251"
+      - "10252:10252"
+      - "10253:10253"
+      - "10254:10254"
+    environment:
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 4
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true"
+    networks:
+      - retail-example
+      
+networks:
+    retail-example:
+  
